@@ -1,0 +1,12 @@
+facushopdb_high = (description= (retry_count=20)(retry_delay=3)(address=(protocol=tcps)(port=1522)(host=adb.sa-saopaulo-1.oraclecloud.com))(connect_data=(service_name=gcb6805ee7edfaa_facushopdb_high.adb.oraclecloud.com))(security=(ssl_server_dn_match=yes)))
+
+facushopdb_low = (description= (retry_count=20)(retry_delay=3)(address=(protocol=tcps)(port=1522)(host=adb.sa-saopaulo-1.oraclecloud.com))(connect_data=(service_name=gcb6805ee7edfaa_facushopdb_low.adb.oraclecloud.com))(security=(ssl_server_dn_match=yes)))
+
+facushopdb_medium = (description= (retry_count=20)(retry_delay=3)(address=(protocol=tcps)(port=1522)(host=adb.sa-saopaulo-1.oraclecloud.com))(connect_data=(service_name=gcb6805ee7edfaa_facushopdb_medium.adb.oraclecloud.com))(security=(ssl_server_dn_match=yes)))
+
+facushopdb_tp = (description= (retry_count=20)(retry_delay=3)(address=(protocol=tcps)(port=1522)(host=adb.sa-saopaulo-1.oraclecloud.com))(connect_data=(service_name=gcb6805ee7edfaa_facushopdb_tp.adb.oraclecloud.com))(security=(ssl_server_dn_match=yes)))
+
+facushopdb_tpurgent = (description= (retry_count=20)(retry_delay=3)(address=(protocol=tcps)(port=1522)(host=adb.sa-saopaulo-1.oraclecloud.com))(connect_data=(service_name=gcb6805ee7edfaa_facushopdb_tpurgent.adb.oraclecloud.com))(security=(ssl_server_dn_match=yes)))
+
+
+
