@@ -52,6 +52,7 @@ public class ProductService {
                 .imageUrl(product.getImageUrl())
                 .category(categoryDto)
                 .seller(sellerDto)
+                .stock(product.getStock())
                 .build();
     }
 
@@ -76,6 +77,7 @@ public class ProductService {
                 .imageUrl(imageUrl)
                 .category(category)
                 .seller(seller) // <-- ¡ASIGNA EL VENDEDOR!
+                .stock(request.getStock())
                 .build();
 
         // 5. Guardar en la BD y devolver
@@ -117,6 +119,7 @@ public class ProductService {
         productToUpdate.setDescription(request.getDescription());
         productToUpdate.setPrice(request.getPrice());
         productToUpdate.setCategory(category);
+        productToUpdate.setStock(request.getStock());
 
         // 4. (Opcional) Si mandan una nueva imagen, la actualizamos
         if (imageFile != null && !imageFile.isEmpty()) {

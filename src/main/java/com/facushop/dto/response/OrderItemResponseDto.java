@@ -6,7 +6,7 @@ import java.math.BigDecimal;
 
 @Data
 @Builder
-public class CartItemDto {
+public class OrderItemResponseDto {
     private Long productId;
     private String productTitle;
     private String productImageUrl;

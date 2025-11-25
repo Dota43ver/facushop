@@ -2,8 +2,8 @@ package com.facushop.service;
 
 import com.facushop.domain.*;
 import com.facushop.dto.AddItemRequest;
-import com.facushop.dto.response.CartItemDto;
-import com.facushop.dto.response.CartResponseDto;
+import com.facushop.dto.response.OrderItemResponseDto;
+import com.facushop.dto.response.OrderResponseDto;
 import com.facushop.repository.OrderItemRepository;
 import com.facushop.repository.OrderRepository;
 import com.facushop.repository.ProductRepository;
@@ -14,7 +14,6 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -32,7 +31,7 @@ public class CartService {
      * Obtiene el carrito del usuario logueado o crea uno nuevo si no existe.
      */
     @Transactional
-    public CartResponseDto getCart(UserDetails loggedInUser) {
+    public OrderResponseDto getCart(UserDetails loggedInUser) {
         User user = findUser(loggedInUser);
         Order cart = findOrCreateCart(user);
         return mapToCartDto(cart);
@@ -42,7 +41,7 @@ public class CartService {
      * Añade un item al carrito.
      */
     @Transactional
-    public CartResponseDto addItemToCart(AddItemRequest request, UserDetails loggedInUser) {
+    public OrderResponseDto addItemToCart(AddItemRequest request, UserDetails loggedInUser) {
         User user = findUser(loggedInUser);
         Order cart = findOrCreateCart(user);
 
@@ -50,24 +49,38 @@ public class CartService {
         Product product = productRepository.findById(request.getProductId())
                 .orElseThrow(() -> new RuntimeException("Producto no encontrado"));
 
+        if (product.getStock() <= 0) {
+            throw new RuntimeException("No hay stock para: " + product.getTitle());
+        }
+
         // 2. Revisar si el producto ya está en el carrito
         Optional<OrderItem> existingItemOpt = orderItemRepository.findByOrderAndProduct(cart, product);
 
         if (existingItemOpt.isPresent()) {
-            // Si existe, actualiza la cantidad
             OrderItem item = existingItemOpt.get();
-            item.setQuantity(item.getQuantity() + request.getQuantity());
+            int newQuantity = item.getQuantity() + request.getQuantity();
+
+            // Revisa si la *nueva* cantidad supera el stock
+            if (newQuantity > product.getStock()) {
+                throw new RuntimeException("Stock insuficiente. Solo quedan " + product.getStock() + " unidades.");
+            }
+            item.setQuantity(newQuantity);
             orderItemRepository.save(item);
         } else {
-            // Si no existe, crea un nuevo OrderItem
+            // Revisa si la cantidad *inicial* supera el stock
+            if (request.getQuantity() > product.getStock()) {
+                throw new RuntimeException("Stock insuficiente. Solo quedan " + product.getStock() + " unidades.");
+            }
+
             OrderItem newItem = OrderItem.builder()
                     .order(cart)
                     .product(product)
                     .quantity(request.getQuantity())
-                    .priceAtPurchase(product.getPrice()) // Guarda el precio actual
+                    .priceAtPurchase(product.getPrice()) // Guarda el precio actual del producto
                     .build();
-            cart.getItems().add(newItem); // Añade el item a la lista del pedido
+            cart.getItems().add(newItem);
             orderItemRepository.save(newItem);
+
         }
 
         // 3. Recalcular el total y guardar
@@ -81,7 +94,7 @@ public class CartService {
      * Quita un item del carrito por completo.
      */
     @Transactional
-    public CartResponseDto removeItemFromCart(Long productId, UserDetails loggedInUser) {
+    public OrderResponseDto removeItemFromCart(Long productId, UserDetails loggedInUser) {
         User user = findUser(loggedInUser);
         Order cart = findOrCreateCart(user);
 
@@ -135,9 +148,9 @@ public class CartService {
         cart.setTotalAmount(total);
     }
 
-    private CartResponseDto mapToCartDto(Order cart) {
-        List<CartItemDto> itemDtos = cart.getItems().stream()
-                .map(item -> CartItemDto.builder()
+    private OrderResponseDto mapToCartDto(Order cart) {
+        List<OrderItemResponseDto> itemDtos = cart.getItems().stream()
+                .map(item -> OrderItemResponseDto.builder()
                         .productId(item.getProduct().getId())
                         .productTitle(item.getProduct().getTitle())
                         .productImageUrl(item.getProduct().getImageUrl())
@@ -147,7 +160,7 @@ public class CartService {
                         .build())
                 .collect(Collectors.toList());
 
-        return CartResponseDto.builder()
+        return OrderResponseDto.builder()
                 .orderId(cart.getId())
                 .items(itemDtos)
                 .totalAmount(cart.getTotalAmount())

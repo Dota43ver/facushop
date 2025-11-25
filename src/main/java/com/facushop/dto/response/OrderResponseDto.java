@@ -7,8 +7,8 @@ import java.util.List;
 
 @Data
 @Builder
-public class CartResponseDto {
+public class OrderResponseDto {
     private Long orderId;
-    private List<CartItemDto> items;
+    private List<OrderItemResponseDto> items;
     private BigDecimal totalAmount;
 }

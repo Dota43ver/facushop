@@ -46,4 +46,7 @@ public class Product {
     @ManyToOne(fetch = FetchType.LAZY) // LAZY = No cargar el usuario a menos que se pida
     @JoinColumn(name = "seller_id", nullable = false) // No puede haber un producto sin vendedor
     private User seller;
+
+    @Column(nullable = false)
+    private Integer stock;
 }

@@ -37,6 +37,8 @@ public class SecurityConfiguration {
                         .permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/categories/**")
                         .permitAll()
+                        .requestMatchers("/api/webhooks/**") // Permite el Webhook de MP
+                        .permitAll()
 
                         // Opcional: Si quieres que CUALQUIERA vea las categorías
                         // .requestMatchers(HttpMethod.GET, "/api/categories/**").permitAll()

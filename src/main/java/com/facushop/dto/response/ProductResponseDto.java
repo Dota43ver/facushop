@@ -19,4 +19,5 @@ public class ProductResponseDto {
     private String imageUrl;
     private CategoryDto category;
     private SellerDto seller; // <-- ¡Usamos nuestro DTO, no la Entidad!
+    private Integer stock;
 }

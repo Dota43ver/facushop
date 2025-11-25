@@ -1,7 +1,7 @@
 package com.facushop.controller;
 
 import com.facushop.dto.AddItemRequest;
-import com.facushop.dto.response.CartResponseDto;
+import com.facushop.dto.response.OrderResponseDto;
 import com.facushop.service.CartService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -20,7 +20,7 @@ public class CartController {
      * Obtiene el carrito del usuario actual.
      */
     @GetMapping
-    public ResponseEntity<CartResponseDto> getMyCart(@AuthenticationPrincipal UserDetails loggedInUser) {
+    public ResponseEntity<OrderResponseDto> getMyCart(@AuthenticationPrincipal UserDetails loggedInUser) {
         return ResponseEntity.ok(cartService.getCart(loggedInUser));
     }
 
@@ -28,7 +28,7 @@ public class CartController {
      * Añade un item al carrito.
      */
     @PostMapping("/items")
-    public ResponseEntity<CartResponseDto> addItemToMyCart(
+    public ResponseEntity<OrderResponseDto> addItemToMyCart(
             @RequestBody AddItemRequest request,
             @AuthenticationPrincipal UserDetails loggedInUser
     ) {
@@ -39,7 +39,7 @@ public class CartController {
      * Elimina un item del carrito.
      */
     @DeleteMapping("/items/{productId}")
-    public ResponseEntity<CartResponseDto> removeItemFromMyCart(
+    public ResponseEntity<OrderResponseDto> removeItemFromMyCart(
             @PathVariable Long productId,
             @AuthenticationPrincipal UserDetails loggedInUser
     ) {

@@ -69,8 +69,8 @@ public class StorageService {
         String region = this.provider.getRegion().getRegionId(); // Ej. "sa-santiago-1"
 
         // ¡IMPORTANTE! Tienes que hacer tu bucket público para que esto funcione.
-        String objectUrl = String.format("https://%s.objectstorage.%s.oraclecloud.com/n/%s/b/%s/o/%s",
-                namespace, region, namespace, bucketName, uniqueFilename);
+        String objectUrl = String.format("https://objectstorage.%s.oraclecloud.com/n/%s/b/%s/o/%s",
+                region, namespace, bucketName, uniqueFilename);
 
         return objectUrl;
     }

@@ -16,6 +16,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
+import jakarta.validation.Valid;
 
 import java.io.IOException;
 
@@ -28,6 +29,7 @@ public class ProductController {
 
     @PostMapping(consumes = {"multipart/form-data"})
     public ResponseEntity<ProductResponseDto> createProduct(
+            @Valid
             @ModelAttribute ProductRequest request,
             @RequestPart("image") MultipartFile imageFile,
             @AuthenticationPrincipal UserDetails loggedInUser // <-- ¡AÑADE ESTO!
@@ -59,6 +61,7 @@ public class ProductController {
 
     @PutMapping(value = "/{id}", consumes = {"multipart/form-data"})
     public ResponseEntity<ProductResponseDto> updateProduct(
+            @Valid
             @PathVariable Long id,
             @ModelAttribute ProductRequest request,
             @RequestPart(value = "image", required = false) MultipartFile imageFile, // La imagen es opcional
