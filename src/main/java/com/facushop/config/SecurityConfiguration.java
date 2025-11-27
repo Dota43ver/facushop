@@ -44,6 +44,7 @@ public class SecurityConfiguration {
                         .permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/categories/**")
                         .permitAll()
+                        .requestMatchers("/actuator/**").permitAll()
                         .requestMatchers("/api/webhooks/**")
                         .permitAll()
                         .anyRequest()
