@@ -1,0 +1,57 @@
+services:
+  # 1. Tu API Spring Boot
+  facushop-api:
+    build: .
+    container_name: facushop-backend
+    restart: unless-stopped
+    environment:
+      # Inyectamos las variables a Spring Boot
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres-db:5432/${DB_NAME}
+      - SPRING_DATASOURCE_USERNAME=${DB_USER}
+      - SPRING_DATASOURCE_PASSWORD=${DB_PASSWORD}
+      
+      # Spring Boot traduce automáticamente esto a "application.jwt.secret-key"
+      - APPLICATION_JWT_SECRET_KEY=${JWT_SECRET}
+      
+      # Spring Boot traduce automáticamente esto a "mercadopago.access-token"
+      - MERCADOPAGO_ACCESS_TOKEN=${MP_ACCESS_TOKEN}
+    networks:
+      - facushop-network
+    depends_on:
+      - postgres-db
+
+  # 2. Base de Datos PostgreSQL
+  postgres-db:
+    image: postgres:15-alpine
+    container_name: facushop-postgres
+    restart: unless-stopped
+    environment:
+      # PostgreSQL usa estas variables nativas para inicializar la BD la primera vez
+      POSTGRES_DB: ${DB_NAME}
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - facushop-network
+
+  # 3. Proxy Inverso (Nginx)
+  nginx:
+    image: nginx:alpine
+    container_name: facushop-nginx
+    restart: unless-stopped
+    ports:
+      - "80:80"
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf:ro
+    networks:
+      - facushop-network
+    depends_on:
+      - facushop-api
+
+networks:
+  facushop-network:
+    driver: bridge
+
+volumes:
+  postgres_data:

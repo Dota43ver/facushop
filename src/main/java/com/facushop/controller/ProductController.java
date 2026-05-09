@@ -7,10 +7,10 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
+
 import java.util.List;
 import com.facushop.dto.response.ProductResponseDto;
+import org.springframework.security.access.prepost.PreAuthorize;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.AccessDeniedException;
@@ -27,6 +27,7 @@ public class ProductController {
 
     private final ProductService productService;
 
+    @PreAuthorize("hasAuthority('ADMIN')")
     @PostMapping(consumes = {"multipart/form-data"})
     public ResponseEntity<ProductResponseDto> createProduct(
             @Valid
@@ -59,6 +60,7 @@ public class ProductController {
         return ResponseEntity.ok(productService.getProductsByCategory(id));
     }
 
+    @PreAuthorize("hasAuthority('ADMIN')")
     @PutMapping(value = "/{id}", consumes = {"multipart/form-data"})
     public ResponseEntity<ProductResponseDto> updateProduct(
             @Valid
@@ -80,6 +82,7 @@ public class ProductController {
         }
     }
 
+    @PreAuthorize("hasAuthority('ADMIN')")
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteProduct(
             @PathVariable Long id,
